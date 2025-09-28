@@ -3,7 +3,7 @@ import type { DataRoomItem } from '../../types/dataroom';
 import { useItemsDispatchContext, useItemsStateContext } from '@/contexts/ItemsContext';
 
 // Hook to use both items state and dispatch with helper functions
-export const useItems = () => {
+export const useItemsActions = () => {
   const state = useItemsStateContext();
   const dispatch = useItemsDispatchContext();
 
@@ -51,3 +51,5 @@ export const useItems = () => {
     getItemsByParent,
   };
 };
+
+export default useItemsActions;

@@ -2,7 +2,7 @@ import { useFolderDispatchContext } from '../../contexts/FolderContext';
 import { FOLDER_ACTIONS } from '../../utils/constants/folders';
 
 // Hook to use both folder state and dispatch with helper functions
-export const useFolder = () => {
+const useFolderActions = () => {
   const dispatch = useFolderDispatchContext();
 
   const setCurrentFolder = (folderId: string | null) => {
@@ -18,3 +18,5 @@ export const useFolder = () => {
     navigateToFolder,
   };
 };
+
+export default useFolderActions;

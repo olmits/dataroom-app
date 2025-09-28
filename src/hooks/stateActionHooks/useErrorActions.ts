@@ -1,8 +1,7 @@
 import { useErrorDispatchContext } from '@/contexts/ErrorContext';
 import { ERROR_ACTIONS } from '../../utils/constants/errors';
 
-// Hook to use both error state and dispatch with helper functions
-export const useError = () => {
+const useErrorActions = () => {
   const dispatch = useErrorDispatchContext();
 
   const setError = (error: string | null) => {
@@ -18,3 +17,5 @@ export const useError = () => {
     clearError,
   };
 };
+
+export default useErrorActions;

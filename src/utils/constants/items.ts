@@ -1,0 +1,12 @@
+// Items action constants
+export const ITEMS_ACTIONS = {
+  SET_ITEMS: 'SET_ITEMS',
+  ADD_ITEM: 'ADD_ITEM',
+  UPDATE_ITEM: 'UPDATE_ITEM',
+  DELETE_ITEM: 'DELETE_ITEM',
+  DELETE_ITEMS: 'DELETE_ITEMS',
+  SET_SELECTED_ITEMS: 'SET_SELECTED_ITEMS',
+  CLEAR_SELECTION: 'CLEAR_SELECTION',
+} as const;
+
+export type ItemsActionType = typeof ITEMS_ACTIONS[keyof typeof ITEMS_ACTIONS];

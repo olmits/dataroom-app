@@ -19,5 +19,22 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Disable react-refresh rule for context files
+      'react-refresh/only-export-components': [
+        'warn',
+        { 
+          allowConstantExport: true,
+          allowExportNames: ['loader', 'action', 'ErrorBoundary']
+        }
+      ]
+    }
   },
+  // Specific override for context files
+  {
+    files: ['**/contexts/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off'
+    }
+  }
 ])

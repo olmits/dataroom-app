@@ -1,6 +1,6 @@
 import { useErrorDispatchContext } from '@/contexts/ErrorContext';
-import { ERROR_ACTIONS, type ErrorKeyType } from '../../utils/constants/errors';
-import { type ErrorType } from '../../utils/reducers/errorReducer';
+import { ERROR_ACTIONS, type ErrorKeyType } from '@/utils/constants/errors';
+import { type ErrorType } from '@/utils/reducers/errorReducer';
 
 const useErrorActions = () => {
   const dispatch = useErrorDispatchContext();

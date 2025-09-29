@@ -1,9 +1,10 @@
-import { getFolderService, getFileService } from '../data-room';
+import { getFolderService, getFileService } from '@/data-room';
+import { ERROR_KEYS } from '@/utils/constants/errors';
+
 import useLoadingActions from './stateActionHooks/useLoadingActions';
 import useErrorActions from './stateActionHooks/useErrorActions';
 import useFolderActions from './stateActionHooks/useFolderActions';
 import useFilesActions from './stateActionHooks/useFilesActions';
-import { ERROR_KEYS } from '../utils/constants/errors';
 
 interface DeleteResult {
   success: boolean;

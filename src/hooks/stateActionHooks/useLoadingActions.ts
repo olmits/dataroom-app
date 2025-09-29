@@ -1,5 +1,5 @@
 import { useLoadingDispatchContext } from '@/contexts/LoadingContext';
-import { LOADING_ACTIONS } from '../../utils/constants/loading';
+import { LOADING_ACTIONS } from '@/utils/constants/loading';
 
 const useLoadingActions = () => {
   const dispatch = useLoadingDispatchContext();

@@ -1,9 +1,10 @@
-import { getFolderService, getFileService } from '../data-room';
+import { getFolderService, getFileService } from '@/data-room';
+import { ERROR_KEYS } from '@/utils/constants/errors';
+import type { DataRoomItem } from '@/types/dataroom';
+
 import { useFolderCallbacks } from './useFolderCallbacks';
 import useErrorActions from './stateActionHooks/useErrorActions';
 import useLoadingActions from './stateActionHooks/useLoadingActions';
-import { ERROR_KEYS } from '../utils/constants/errors';
-import type { DataRoomItem } from '../types/dataroom';
 
 interface UpdateResult {
   success: boolean;

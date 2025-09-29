@@ -1,17 +1,12 @@
-import { useFolderDispatchContext } from '../../contexts/FolderContext';
-import { FOLDER_ACTIONS } from '../../utils/constants/folders';
-import type { DataRoomFolder } from '../../types/dataroom';
+import { useFolderDispatchContext } from '@/contexts/FolderContext';
+import { FOLDER_ACTIONS } from '@/utils/constants/folders';
+import type { DataRoomFolder } from '@/types/dataroom';
 
-// Hook to use both folder state and dispatch with helper functions
 const useFolderActions = () => {
   const dispatch = useFolderDispatchContext();
 
   const setCurrentFolder = (folderId: string | null) => {
     dispatch({ type: FOLDER_ACTIONS.SET_CURRENT_FOLDER, payload: folderId });
-  };
-
-  const navigateToFolder = (folderId: string | null) => {
-    dispatch({ type: FOLDER_ACTIONS.NAVIGATE_TO_FOLDER, payload: folderId });
   };
 
   const setIsCreating = (isCreating: boolean) => {
@@ -32,7 +27,6 @@ const useFolderActions = () => {
 
   return {
     setCurrentFolder,
-    navigateToFolder,
     setIsCreating,
     setFolders,
     addFolder,

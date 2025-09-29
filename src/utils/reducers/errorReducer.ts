@@ -1,12 +1,10 @@
 import { ERROR_ACTIONS } from '../constants/errors';
 
-// Error type
 export type ErrorType = {
   message: string; 
   code?: string;
 };
 
-// Error action types
 export type SetErrorAction<T extends string> = {
   type: typeof ERROR_ACTIONS.SET_ERROR;
   payload: { key: T; error: ErrorType };
@@ -26,17 +24,14 @@ export type ErrorAction<T extends string = string> =
   | RemoveErrorAction<T>
   | ClearAllErrorsAction;
 
-// Error state type
 export type ErrorState<T extends string = string> = {
   errors: Partial<Record<T, ErrorType>>;
 };
 
-// Initial error state
 export const initialErrorState: ErrorState = {
   errors: {},
 };
 
-// Error reducer
 export const errorReducer = <T extends string>(
   state: ErrorState<T>, 
   action: ErrorAction<T>

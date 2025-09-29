@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { useFolderStateContext } from '../contexts/FolderContext';
-import { useFolderCallbacks } from '../hooks/useFolderCallbacks';
-import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
-import { ERROR_KEYS } from '../utils/constants/errors';
+
+import { useFolderStateContext } from '@/contexts/FolderContext';
+import { useErrorStateContext } from '@/contexts/ErrorContext';
+import { useFolderCallbacks } from '@/hooks/useFolderCallbacks';
+import useErrorActions from '@/hooks/stateActionHooks/useErrorActions';
+import { ERROR_KEYS } from '@/utils/constants/errors';
+
 import Modal from './common/Modal';
 import Button from './common/Button';
-import { useErrorStateContext } from '@/contexts/ErrorContext';
 import Alert from './common/Alert';
 
 interface NewFolderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onFolderCreated: () => void;
 }
 
-const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFolderCreated }) => {
+const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose }) => {
   const [folderName, setFolderName] = useState('');
 
   const { errors } = useErrorStateContext();
@@ -29,7 +30,6 @@ const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFold
     if (result.success) {
       setFolderName('');
       onClose();
-      onFolderCreated();
     }
   };
 

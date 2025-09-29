@@ -12,10 +12,9 @@ import { formatFileSize } from '../utils/fileHelpers';
 interface FileUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUploadSuccess?: () => void;
 }
 
-export default function FileUploadModal({ isOpen, onClose, onUploadSuccess }: FileUploadModalProps) {
+export default function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
   const { clearError } = useErrorActions();
   const { isLoading } = useLoadingStateContext();
   const { errors } = useErrorStateContext();
@@ -43,7 +42,6 @@ export default function FileUploadModal({ isOpen, onClose, onUploadSuccess }: Fi
 
     const success = await uploadFile();
     if (success) {
-      onUploadSuccess?.();
       onClose();
     }
   };

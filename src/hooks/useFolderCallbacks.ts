@@ -1,11 +1,13 @@
-import { getFolderService } from '../data-room';
+import { getFolderService } from '@/data-room';
+
+import { ERROR_KEYS } from '@/utils/constants/errors';
+import { useFolderStateContext } from '@/contexts/FolderContext';
+import type { DataRoomFile } from '@/types/dataroom';
+
 import useLoadingActions from './stateActionHooks/useLoadingActions';
 import useErrorActions from './stateActionHooks/useErrorActions';
-import { ERROR_KEYS } from '../utils/constants/errors';
 import useFolderActions from './stateActionHooks/useFolderActions';
-import { useFolderStateContext } from '../contexts/FolderContext';
 import { useFilesActions } from './stateActionHooks/useFilesActions';
-import type { DataRoomFile } from '../types/dataroom';
 
 interface CreateFolderResult {
   success: boolean;
@@ -31,7 +33,6 @@ export const useFolderCallbacks = () => {
     try {
       const folderService = getFolderService();
       // Load both folders and files based on current folder context (null for root)
-      console.log('Loading folder content for folder ID:', currentFolderId);
       const result = await folderService.getFolderContents(currentFolderId);
   
       if (result.success && result.data) {        

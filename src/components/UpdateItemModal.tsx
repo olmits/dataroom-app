@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Edit3 } from 'lucide-react';
+
+import { useErrorStateContext } from '@/contexts/ErrorContext';
+import useErrorActions from '@/hooks/stateActionHooks/useErrorActions';
+import { ERROR_KEYS } from '@/utils/constants/errors';
+import type { DataRoomItem } from '@/types/dataroom';
+
 import Modal from './common/Modal';
 import Button from './common/Button';
 import Alert from './common/Alert';
-import { useErrorStateContext } from '../contexts/ErrorContext';
-import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
-import { ERROR_KEYS } from '../utils/constants/errors';
-import type { DataRoomItem } from '../types/dataroom';
 
 interface UpdateItemModalProps {
   isOpen: boolean;

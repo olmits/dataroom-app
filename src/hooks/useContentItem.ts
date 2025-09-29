@@ -1,8 +1,10 @@
 import { useState } from 'react';
+
+import { openFileInNewTab } from '@/utils/fileHelpers';
+import type { DataRoomFile, DataRoomFolder, DataRoomItem } from '@/types/dataroom';
+
 import { useItemDeletionCallbacks } from './useItemDeletionCallbacks';
 import { useItemUpdateCallbacks } from './useItemUpdateCallbacks';
-import { openFileInNewTab } from '../utils/fileHelpers';
-import type { DataRoomFile, DataRoomFolder, DataRoomItem } from '../types/dataroom';
 import useFolderActions from './stateActionHooks/useFolderActions';
 
 interface UseContentItemResult {

@@ -5,6 +5,7 @@ import useErrorActions from './stateActionHooks/useErrorActions';
 import useLoadingActions from './stateActionHooks/useLoadingActions';
 import { ERROR_KEYS } from '../utils/constants/errors';
 import { isValidFileType, isValidFileSize } from '../utils/fileHelpers';
+import useFilesActions from './stateActionHooks/useFilesActions';
 
 interface UseFileUploadResult {
   // State
@@ -28,6 +29,7 @@ export const useFileUpload = (): UseFileUploadResult => {
   const [dragOver, setDragOver] = useState(false);
 
   const { currentFolderId } = useFolderStateContext();
+  const { addFile } = useFilesActions();
   const { setLoading } = useLoadingActions();
   const { setError, clearError } = useErrorActions();
 
@@ -84,8 +86,9 @@ export const useFileUpload = (): UseFileUploadResult => {
       const fileService = getFileService();
       const result = await fileService.uploadFile(selectedFile, currentFolderId);
 
-      if (result.success) {
+      if (result.success && result.data) {
         resetFileInput();
+        addFile(result.data);
         return true;
       } else {
         setError(ERROR_KEYS.FILE_UPLOAD, result.error || 'Failed to upload file');

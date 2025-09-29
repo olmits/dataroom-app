@@ -1,8 +1,7 @@
-import { FILES_ACTIONS } from '../../utils/constants/files';
-import type { DataRoomFile } from '../../types/dataroom';
-import { useFilesDispatchContext } from '../../contexts/FilesContext';
+import { FILES_ACTIONS } from '@/utils/constants/files';
+import type { DataRoomFile } from '@/types/dataroom';
+import { useFilesDispatchContext } from '@/contexts/FilesContext';
 
-// Hook to use both files state and dispatch with helper functions
 export const useFilesActions = () => {
   const dispatch = useFilesDispatchContext();
 
@@ -22,26 +21,11 @@ export const useFilesActions = () => {
     dispatch({ type: FILES_ACTIONS.DELETE_FILE, payload: id });
   };
 
-  const deleteFiles = (ids: string[]) => {
-    dispatch({ type: FILES_ACTIONS.DELETE_FILES, payload: ids });
-  };
-
-  const setSelectedFiles = (ids: string[]) => {
-    dispatch({ type: FILES_ACTIONS.SET_SELECTED_FILES, payload: ids });
-  };
-
-  const clearSelection = () => {
-    dispatch({ type: FILES_ACTIONS.CLEAR_SELECTION });
-  };
-
   return {
     setFiles,
     addFile,
     updateFile,
     deleteFile,
-    deleteFiles,
-    setSelectedFiles,
-    clearSelection,
   };
 };
 

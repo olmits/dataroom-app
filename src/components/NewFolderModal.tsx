@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { getFolderService } from '../data-room';
-import useLoadingActions from '../hooks/stateActionHooks/useLoadingActions';
+import { useFolderStateContext } from '../contexts/FolderContext';
+import { useFolderCallbacks } from '../hooks/useFolderCallbacks';
 import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
+import { ERROR_KEYS } from '../utils/constants/errors';
 import Modal from './common/Modal';
 import Button from './common/Button';
 
@@ -13,43 +14,25 @@ interface NewFolderModalProps {
 
 const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFolderCreated }) => {
   const [folderName, setFolderName] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
-  const { setLoading } = useLoadingActions();
-  const { setError, clearError } = useErrorActions();
+  
+  const { isCreating } = useFolderStateContext();
+  const { createFolder } = useFolderCallbacks();
+  const { clearError } = useErrorActions();
 
   const handleCreate = async () => {
-    if (!folderName.trim()) {
-      setError('Folder name is required');
-      return;
+    const result = await createFolder(folderName.trim(), null);
+    
+    if (result.success) {
+      setFolderName('');
+      onClose();
+      onFolderCreated();
     }
-
-    setIsCreating(true);
-    setLoading(true);
-    clearError();
-
-    try {
-      const folderService = getFolderService();
-      const result = await folderService.createFolder(folderName.trim(), null);
-
-      if (result.success) {
-        setFolderName('');
-        onClose();
-        onFolderCreated();
-      } else {
-        setError(result.error || 'Failed to create folder');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create folder';
-      setError(errorMessage);
-    } finally {
-      setIsCreating(false);
-      setLoading(false);
-    }
+    // Error handling is now done in the useFolderCallbacks hook
   };
 
   const handleCancel = () => {
     setFolderName('');
-    clearError();
+    clearError(ERROR_KEYS.FOLDER_CREATION);
     onClose();
   };
 

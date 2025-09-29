@@ -8,32 +8,34 @@ import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
 import useLoadingActions from '../hooks/stateActionHooks/useLoadingActions';
 import { useLoadingStateContext } from '../contexts/LoadingContext';
 import { useErrorStateContext } from '../contexts/ErrorContext';
+import { ERROR_KEYS } from '../utils/constants/errors';
 import type { DataRoomFolder } from '../types/dataroom';
 
 const DataRoomDashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [folders, setFolders] = useState<DataRoomFolder[]>([]);
-  const { clearError, setError, } = useErrorActions();
+  const { clearError, setError } = useErrorActions();
   const { setLoading } = useLoadingActions();
   const { isLoading } = useLoadingStateContext();
-  const errorState = useErrorStateContext();
+  const { errors } = useErrorStateContext();
 
   const loadFolders = async () => {
+    const errorKey = ERROR_KEYS.FOLDER_LOADING;
     setLoading(true);
-    clearError();
+    clearError(errorKey);
 
     try {
       const folderService = getFolderService();
       const result = await folderService.getFolderContents(null);
 
-      if (result.success && result.data) {
+      if (result.success && result.data) {        
         setFolders(result.data.folders);
       } else {
-        setError(result.error || 'Failed to load folders');
+        setError(errorKey, result.error || 'Failed to load folders');
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load folders';
-      setError(errorMessage);
+      setError(errorKey, errorMessage);
     } finally {
       setLoading(false);
     }
@@ -55,10 +57,10 @@ const DataRoomDashboard: React.FC = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {/* Error Display */}
-        {errorState.error && (
+        {errors[ERROR_KEYS.FOLDER_LOADING] && (
           <Alert 
-            message={errorState.error}
-            onClose={() => clearError()}
+            message={errors[ERROR_KEYS.FOLDER_LOADING]!.message}
+            onClose={() => clearError(ERROR_KEYS.FOLDER_LOADING)}
             type="error"
           />
         )}

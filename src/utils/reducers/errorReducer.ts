@@ -1,28 +1,68 @@
-import { ERROR_ACTIONS, type ErrorActionType } from '../constants/errors';
+import { ERROR_ACTIONS } from '../constants/errors';
+
+// Error type
+export type ErrorType = {
+  message: string; 
+  code?: string;
+};
+
+// Error action types
+export type SetErrorAction<T extends string> = {
+  type: typeof ERROR_ACTIONS.SET_ERROR;
+  payload: { key: T; error: ErrorType };
+};
+
+export type RemoveErrorAction<T extends string> = {
+  type: typeof ERROR_ACTIONS.REMOVE_ERROR;
+  payload: { key: T };
+};
+
+export type ClearAllErrorsAction = {
+  type: typeof ERROR_ACTIONS.CLEAR_ALL_ERRORS;
+};
+
+export type ErrorAction<T extends string = string> = 
+  | SetErrorAction<T>
+  | RemoveErrorAction<T>
+  | ClearAllErrorsAction;
 
 // Error state type
-export interface ErrorState {
-  error: string | null;
-}
-
-// Error action type
-export type ErrorAction = {
-  type: ErrorActionType;
-  payload?: string | null;
+export type ErrorState<T extends string = string> = {
+  errors: Partial<Record<T, ErrorType>>;
 };
 
 // Initial error state
 export const initialErrorState: ErrorState = {
-  error: null,
+  errors: {},
 };
 
 // Error reducer
-export const errorReducer = (state: ErrorState, action: ErrorAction): ErrorState => {
+export const errorReducer = <T extends string>(
+  state: ErrorState<T>, 
+  action: ErrorAction<T>
+): ErrorState<T> => {
   switch (action.type) {
     case ERROR_ACTIONS.SET_ERROR:
-      return { ...state, error: action.payload || null };
-    case ERROR_ACTIONS.CLEAR_ERROR:
-      return { ...state, error: null };
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          [action.payload.key]: action.payload.error,
+        },
+      };
+    case ERROR_ACTIONS.REMOVE_ERROR: {
+      const newErrors = { ...state.errors };
+      delete newErrors[action.payload.key];
+      return {
+        ...state,
+        errors: newErrors,
+      };
+    }
+    case ERROR_ACTIONS.CLEAR_ALL_ERRORS:
+      return {
+        ...state,
+        errors: {},
+      };
     default:
       return state;
   }

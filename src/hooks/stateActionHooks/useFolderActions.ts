@@ -13,9 +13,14 @@ const useFolderActions = () => {
     dispatch({ type: FOLDER_ACTIONS.NAVIGATE_TO_FOLDER, payload: folderId });
   };
 
+  const setIsCreating = (isCreating: boolean) => {
+    dispatch({ type: FOLDER_ACTIONS.SET_IS_CREATING, payload: isCreating });
+  };
+
   return {
     setCurrentFolder,
     navigateToFolder,
+    setIsCreating,
   };
 };
 

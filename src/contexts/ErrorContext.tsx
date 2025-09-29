@@ -5,7 +5,7 @@ export const ErrorStateContext = createContext<ErrorState | undefined>(undefined
 export const ErrorDispatchContext = createContext<Dispatch<ErrorAction> | undefined>(undefined);
 
 export const ErrorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(errorReducer, initialErrorState);
+  const [state, dispatch] = useReducer(errorReducer<string>, initialErrorState);
 
   return (
     <ErrorStateContext.Provider value={state}>

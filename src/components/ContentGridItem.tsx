@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Folder, FileText, Trash2 } from 'lucide-react';
 import { formatFileSize } from '../utils/fileHelpers';
-import { useItemDeletionCallbacks } from '../hooks/useItemDeletionCallbacks';
+import { useContentItem } from '../hooks/useContentItem';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import type { DataRoomItem, DataRoomFile } from '../types/dataroom';
 import Button from './common/Button';
@@ -20,47 +20,14 @@ const ContentGridItem: React.FC<ContentGridItemProps> = ({
   const isFolder = item.type === 'folder';
   const file = item as DataRoomFile;
   
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const { deleteFolder, deleteFile } = useItemDeletionCallbacks();
-
-  const handleClick = () => {
-    onItemClick(item);
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!isDeleting) {
-      setDeleteModalOpen(true);
-    }
-  }
-
-  const handleDeleteConfirm = async () => {
-    setIsDeleting(true);
-    
-    try {
-      let result;
-      if (item.type === 'folder') {
-        result = await deleteFolder(item.id);
-      } else {
-        result = await deleteFile(item.id);
-      }
-
-      if (result.success) {
-        setDeleteModalOpen(false);
-        onItemDeleted?.(item);
-      }
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleDeleteModalClose = () => {
-    setDeleteModalOpen(false);
-  }
+  const {
+    deleteModalOpen,
+    isDeleting,
+    handleClick,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteModalClose,
+  } = useContentItem({ item, onItemClick, onItemDeleted });
 
   return (
     <>

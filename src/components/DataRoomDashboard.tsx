@@ -1,41 +1,45 @@
 import React, { useState } from 'react';
+
 import NewFolderModal from './NewFolderModal';
+import FileUploadModal from './FileUploadModal';
 import DashboardHeader from './DashboardHeader';
 import DashboardContentGrid from './DashboardContentGrid';
-import Alert from './common/Alert';
-import { useErrorStateContext } from '../contexts/ErrorContext';
-import { ERROR_KEYS } from '../utils/constants/errors';
-import useErrorActions from '@/hooks/stateActionHooks/useErrorActions';
+import DashboardAlertsContainer from './DashboardAlertsContainer';
 import { useFolderCallbacks } from '@/hooks/useFolderCallbacks';
 
 const DataRoomDashboard: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
+  const [isFileModalOpen, setIsFileModalOpen] = useState(false);
 
-  const { clearError } = useErrorActions();
-  const { errors } = useErrorStateContext();
   const { loadFolderContent } = useFolderCallbacks();
 
   const handleFolderCreated = () => {
     loadFolderContent(); // Refresh both folders and files
   };
 
+  const handleFileUploaded = () => {
+    loadFolderContent(); // Refresh both folders and files
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <DashboardHeader onNewFolderClick={() => setIsModalOpen(true)} />
+      <DashboardHeader 
+        onNewFolderClick={() => setIsFolderModalOpen(true)}
+        onUploadFileClick={() => setIsFileModalOpen(true)}
+      />
       <div className="container mx-auto px-4 py-8">
-        {errors[ERROR_KEYS.FOLDER_LOADING] && (
-          <Alert 
-            message={errors[ERROR_KEYS.FOLDER_LOADING]!.message}
-            onClose={() => clearError(ERROR_KEYS.FOLDER_LOADING)}
-            type="error"
-          />
-        )}
+        <DashboardAlertsContainer />
         <DashboardContentGrid />
       </div>
       <NewFolderModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isFolderModalOpen}
+        onClose={() => setIsFolderModalOpen(false)}
         onFolderCreated={handleFolderCreated}
+      />
+      <FileUploadModal
+        isOpen={isFileModalOpen}
+        onClose={() => setIsFileModalOpen(false)}
+        onUploadSuccess={handleFileUploaded}
       />
     </div>
   );

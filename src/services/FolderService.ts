@@ -191,7 +191,7 @@ export class FolderService implements IFolderService {
   }
 
   /**
-   * Get all descendants of a folder (recursive) - Private method
+   * Get all descendants of a folder (recursive)
    */
   private async getFolderDescendants(folderId: string): Promise<string[]> {
     const descendants: string[] = [];

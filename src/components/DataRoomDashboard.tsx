@@ -3,43 +3,20 @@ import { Folder } from 'lucide-react';
 import NewFolderModal from './NewFolderModal';
 import DashboardHeader from './DashboardHeader';
 import Alert from './common/Alert';
-import { getFolderService } from '../data-room';
 import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
-import useLoadingActions from '../hooks/stateActionHooks/useLoadingActions';
 import { useLoadingStateContext } from '../contexts/LoadingContext';
 import { useErrorStateContext } from '../contexts/ErrorContext';
+import { useFolderStateContext } from '../contexts/FolderContext';
+import { useFolderCallbacks } from '../hooks/useFolderCallbacks';
 import { ERROR_KEYS } from '../utils/constants/errors';
-import type { DataRoomFolder } from '../types/dataroom';
 
 const DataRoomDashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [folders, setFolders] = useState<DataRoomFolder[]>([]);
-  const { clearError, setError } = useErrorActions();
-  const { setLoading } = useLoadingActions();
+  const { clearError } = useErrorActions();
   const { isLoading } = useLoadingStateContext();
   const { errors } = useErrorStateContext();
-
-  const loadFolders = async () => {
-    const errorKey = ERROR_KEYS.FOLDER_LOADING;
-    setLoading(true);
-    clearError(errorKey);
-
-    try {
-      const folderService = getFolderService();
-      const result = await folderService.getFolderContents(null);
-
-      if (result.success && result.data) {        
-        setFolders(result.data.folders);
-      } else {
-        setError(errorKey, result.error || 'Failed to load folders');
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load folders';
-      setError(errorKey, errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { folders } = useFolderStateContext();
+  const { loadFolders } = useFolderCallbacks();
 
   useEffect(() => {
     loadFolders();
@@ -51,7 +28,6 @@ const DataRoomDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <DashboardHeader onNewFolderClick={() => setIsModalOpen(true)} />
 
       {/* Main Content */}
@@ -80,7 +56,7 @@ const DataRoomDashboard: React.FC = () => {
               <div className="col-span-full text-center py-12">
                 <Folder size={48} className="mx-auto text-gray-400 mb-4" />
                 <p className="text-gray-600 text-lg mb-2">No folders yet</p>
-                <p className="text-gray-500">Create your first folder to get started</p>
+                <p className="text-gray-500 mb-4">Click "New Folder" above to create your first folder and start organizing your documents</p>
               </div>
             ) : (
               folders.map((folder) => (

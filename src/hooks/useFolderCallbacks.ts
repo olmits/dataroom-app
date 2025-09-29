@@ -3,16 +3,50 @@ import useLoadingActions from './stateActionHooks/useLoadingActions';
 import useErrorActions from './stateActionHooks/useErrorActions';
 import { ERROR_KEYS } from '../utils/constants/errors';
 import useFolderActions from './stateActionHooks/useFolderActions';
+import { useFolderStateContext } from '../contexts/FolderContext';
 
 interface CreateFolderResult {
   success: boolean;
   error?: string;
 }
 
+interface LoadFoldersResult {
+  success: boolean;
+  error?: string;
+}
+
 export const useFolderCallbacks = () => {
-  const { setIsCreating } = useFolderActions()
+  const { currentFolderId } = useFolderStateContext();
+  const { setIsCreating, setFolders, addFolder } = useFolderActions();
   const { setLoading } = useLoadingActions();
   const { setError, clearError } = useErrorActions();
+
+  const loadFolders = async (): Promise<LoadFoldersResult> => {
+    setLoading(true);
+    clearError(ERROR_KEYS.FOLDER_LOADING);
+
+    try {
+      const folderService = getFolderService();
+      // Load folders based on current folder context (null for root)
+      const result = await folderService.getFolderContents(currentFolderId);
+
+      if (result.success && result.data) {        
+        // Update the folder list in context
+        setFolders(result.data.folders);
+        return { success: true };
+      } else {
+        const error = result.error || 'Failed to load folders';
+        setError(ERROR_KEYS.FOLDER_LOADING, error);
+        return { success: false, error };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load folders';
+      setError(ERROR_KEYS.FOLDER_LOADING, errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createFolder = async (
     folderName: string, 
@@ -35,7 +69,11 @@ export const useFolderCallbacks = () => {
       const folderService = getFolderService();
       const result = await folderService.createFolder(folderName.trim(), parentId);
 
-      if (result.success) {
+      if (result.success && result.data) {
+        // Add the new folder to the context (createFolder returns a single folder)
+        if (!Array.isArray(result.data)) {
+          addFolder(result.data);
+        }
         return { success: true };
       } else {
         const error = result.error || 'Failed to create folder';
@@ -53,6 +91,7 @@ export const useFolderCallbacks = () => {
   };
 
   return {
+    loadFolders,
     createFolder,
   };
 };

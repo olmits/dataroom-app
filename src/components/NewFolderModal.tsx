@@ -14,7 +14,7 @@ interface NewFolderModalProps {
 
 const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFolderCreated }) => {
   const [folderName, setFolderName] = useState('');
-  
+
   const { isCreating } = useFolderStateContext();
   const { createFolder } = useFolderCallbacks();
   const { clearError } = useErrorActions();
@@ -27,7 +27,6 @@ const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFold
       onClose();
       onFolderCreated();
     }
-    // Error handling is now done in the useFolderCallbacks hook
   };
 
   const handleCancel = () => {

@@ -108,21 +108,44 @@ export class IndexedDBDataLayer implements IDataLayer {
     return new Promise((resolve, reject) => {
       const tx = this.db!.transaction([STORE_NAME], 'readonly');
       const store = tx.objectStore(STORE_NAME);
-      const index = store.index('parentId');
-      const request = index.getAll(parentId);
 
-      request.onsuccess = () => {
-        const items = request.result.map((item: DataRoomItem) => ({
-          ...item,
-          createdAt: new Date(item.createdAt),
-          updatedAt: new Date(item.updatedAt),
-        }));
-        resolve(items);
-      };
+      // Handle null parentId differently because IndexedDB doesn't index null values reliably
+      if (parentId === null) {
+        // For root items (parentId === null), we need to scan all items and filter
+        const request = store.getAll();
+        
+        request.onsuccess = () => {
+          const allItems = request.result;
+          const rootItems = allItems.filter((item: DataRoomItem) => item.parentId === null);
+          const items = rootItems.map((item: DataRoomItem) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+          }));
+          resolve(items);
+        };
 
-      request.onerror = () => {
-        reject(new Error(`Failed to get items for parent: ${parentId}`));
-      };
+        request.onerror = () => {
+          reject(new Error(`Failed to get items for parent: ${parentId}`));
+        };
+      } else {
+        // For non-null parentId, use the index as normal
+        const index = store.index('parentId');
+        const request = index.getAll(parentId);
+
+        request.onsuccess = () => {
+          const items = request.result.map((item: DataRoomItem) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+            updatedAt: new Date(item.updatedAt),
+          }));
+          resolve(items);
+        };
+
+        request.onerror = () => {
+          reject(new Error(`Failed to get items for parent: ${parentId}`));
+        };
+      }
     });
   }
 
@@ -130,7 +153,7 @@ export class IndexedDBDataLayer implements IDataLayer {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
-
+    
     const now = new Date();
     const item = {
       ...itemData,

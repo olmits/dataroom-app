@@ -1,5 +1,6 @@
 import { useFolderDispatchContext } from '../../contexts/FolderContext';
 import { FOLDER_ACTIONS } from '../../utils/constants/folders';
+import type { DataRoomFolder } from '../../types/dataroom';
 
 // Hook to use both folder state and dispatch with helper functions
 const useFolderActions = () => {
@@ -17,10 +18,20 @@ const useFolderActions = () => {
     dispatch({ type: FOLDER_ACTIONS.SET_IS_CREATING, payload: isCreating });
   };
 
+  const setFolders = (folders: DataRoomFolder[]) => {
+    dispatch({ type: FOLDER_ACTIONS.SET_FOLDERS, payload: folders });
+  };
+
+  const addFolder = (folder: DataRoomFolder) => {
+    dispatch({ type: FOLDER_ACTIONS.ADD_FOLDER, payload: folder });
+  };
+
   return {
     setCurrentFolder,
     navigateToFolder,
     setIsCreating,
+    setFolders,
+    addFolder,
   };
 };
 

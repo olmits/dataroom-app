@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useReducer, type Dispatch } from 'react';
 import { errorReducer, initialErrorState, type ErrorState, type ErrorAction } from '../utils/reducers/errorReducer';
+import type { ErrorKeyType } from '@/utils/constants/errors';
 
 export const ErrorStateContext = createContext<ErrorState | undefined>(undefined);
-export const ErrorDispatchContext = createContext<Dispatch<ErrorAction> | undefined>(undefined);
+export const ErrorDispatchContext = createContext<Dispatch<ErrorAction<ErrorKeyType>> | undefined>(undefined);
 
 export const ErrorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(errorReducer<string>, initialErrorState);
+  const [state, dispatch] = useReducer(errorReducer<ErrorKeyType>, initialErrorState);
 
   return (
     <ErrorStateContext.Provider value={state}>

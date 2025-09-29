@@ -1,11 +1,11 @@
 import { useErrorDispatchContext } from '@/contexts/ErrorContext';
-import { ERROR_ACTIONS } from '../../utils/constants/errors';
+import { ERROR_ACTIONS, type ErrorKeyType } from '../../utils/constants/errors';
 import { type ErrorType } from '../../utils/reducers/errorReducer';
 
 const useErrorActions = () => {
   const dispatch = useErrorDispatchContext();
 
-  const setError = (key: string, message: string, code?: string) => {
+  const setError = (key: ErrorKeyType, message: string, code?: string) => {
     const error: ErrorType = { message, code };
     dispatch({ 
       type: ERROR_ACTIONS.SET_ERROR, 
@@ -13,7 +13,7 @@ const useErrorActions = () => {
     });
   };
 
-  const removeError = (key: string) => {
+  const removeError = (key: ErrorKeyType) => {
     dispatch({ 
       type: ERROR_ACTIONS.REMOVE_ERROR, 
       payload: { key } 
@@ -25,7 +25,7 @@ const useErrorActions = () => {
   };
 
   // Convenience method for backward compatibility
-  const clearError = (key?: string) => {
+  const clearError = (key?: ErrorKeyType) => {
     if (key) {
       removeError(key);
     } else {

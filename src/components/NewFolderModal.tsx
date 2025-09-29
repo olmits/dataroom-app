@@ -20,7 +20,7 @@ const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFold
   const { clearError } = useErrorActions();
 
   const handleCreate = async () => {
-    const result = await createFolder(folderName.trim(), null);
+    const result = await createFolder(folderName.trim());
     
     if (result.success) {
       setFolderName('');

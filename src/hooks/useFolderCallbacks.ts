@@ -28,6 +28,7 @@ export const useFolderCallbacks = () => {
     try {
       const folderService = getFolderService();
       // Load folders based on current folder context (null for root)
+      console.log('Loading folders for folder ID:', currentFolderId);
       const result = await folderService.getFolderContents(currentFolderId);
 
       if (result.success && result.data) {        
@@ -50,7 +51,6 @@ export const useFolderCallbacks = () => {
 
   const createFolder = async (
     folderName: string, 
-    parentId: string | null = null
   ): Promise<CreateFolderResult> => {
     const errorKey = ERROR_KEYS.FOLDER_CREATION;
     
@@ -67,10 +67,9 @@ export const useFolderCallbacks = () => {
 
     try {
       const folderService = getFolderService();
-      const result = await folderService.createFolder(folderName.trim(), parentId);
+      const result = await folderService.createFolder(folderName.trim(), currentFolderId);
 
       if (result.success && result.data) {
-        // Add the new folder to the context (createFolder returns a single folder)
         if (!Array.isArray(result.data)) {
           addFolder(result.data);
         }

@@ -18,9 +18,8 @@ const DashboardContentGrid: React.FC = () => {
   const { loadFolderContent } = useFolderCallbacks();
   const { setCurrentFolder } = useFolderActions();
 
-  const [currentFolder, setCurrentFolderDetails] = useState<DataRoomFolder | null>(null);
+  const [currentFolderDetails, setCurrentFolderDetails] = useState<DataRoomFolder | null>(null);
 
-  // Load current folder details when currentFolderId changes
   useEffect(() => {
     const loadCurrentFolderDetails = async () => {
       if (currentFolderId) {
@@ -47,7 +46,6 @@ const DashboardContentGrid: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFolderId]); 
 
-    // Handle item click - navigate for folders, view for files
   const handleItemClick = (item: DataRoomItem) => {
     if (item.type === 'folder') {
       const folder = item as DataRoomFolder;
@@ -58,10 +56,8 @@ const DashboardContentGrid: React.FC = () => {
     }
   };
 
-  // Handle file view - open PDF in new tab
   const handleFileView = (file: DataRoomFile) => {
     try {
-      // Convert base64 back to blob and create URL
       const byteCharacters = atob(file.content);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
@@ -71,24 +67,20 @@ const DashboardContentGrid: React.FC = () => {
       const blob = new Blob([byteArray], { type: file.mimeType });
       const url = URL.createObjectURL(blob);
       
-      // Open in new tab
       window.open(url, '_blank');
       
-      // Clean up URL after a delay
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
       console.error('Failed to open file:', error);
     }
   };
 
-  // Handle back to parent folder
   const handleBackToParent = () => {
-    if (currentFolder?.parentId !== undefined) {
-      setCurrentFolder(currentFolder.parentId);
+    if (currentFolderDetails?.parentId !== undefined) {
+      setCurrentFolder(currentFolderDetails.parentId);
     }
   };
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -100,15 +92,14 @@ const DashboardContentGrid: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* Parent folder navigation - show when inside a folder */}
-      {currentFolder && (
+      {currentFolderDetails && (
         <div className="flex items-center">
           <button
             onClick={handleBackToParent}
             className="flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
           >
             <ArrowLeft size={16} className="mr-2" />
-            Back to {currentFolder.parentId ? 'Parent Folder' : 'Root'}
+            Back to {currentFolderDetails.parentId ? 'Parent Folder' : 'Root'}
           </button>
         </div>
       )}
@@ -124,7 +115,7 @@ const DashboardContentGrid: React.FC = () => {
                 <Folder size={48} className="mx-auto text-gray-400 mb-4" />
                 <p className="text-gray-600 text-lg mb-2">No content yet</p>
                 <p className="text-gray-500 mb-4">
-                  {currentFolder 
+                  {currentFolderDetails
                     ? `This folder is empty. Click "New Folder" above to add content.`
                     : `Click "New Folder" above to create your first folder and start organizing your documents`
                   }

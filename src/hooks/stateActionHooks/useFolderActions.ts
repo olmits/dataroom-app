@@ -26,12 +26,17 @@ const useFolderActions = () => {
     dispatch({ type: FOLDER_ACTIONS.ADD_FOLDER, payload: folder });
   };
 
+  const deleteFolder = (folderId: string) => {
+    dispatch({ type: FOLDER_ACTIONS.DELETE_FOLDER, payload: folderId });
+  };
+
   return {
     setCurrentFolder,
     navigateToFolder,
     setIsCreating,
     setFolders,
     addFolder,
+    deleteFolder,
   };
 };
 

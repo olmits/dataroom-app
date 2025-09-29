@@ -25,33 +25,33 @@ export const useFolderCallbacks = () => {
   const { setError, clearError } = useErrorActions();
 
   const loadFolderContent = async (): Promise<LoadFolderContentResult> => {
-      setLoading(true);
-      clearError(ERROR_KEYS.FOLDER_LOADING);
+    setLoading(true);
+    clearError(ERROR_KEYS.FOLDER_LOADING);
   
-      try {
-        const folderService = getFolderService();
-        // Load both folders and files based on current folder context (null for root)
-        console.log('Loading folder content for folder ID:', currentFolderId);
-        const result = await folderService.getFolderContents(currentFolderId);
+    try {
+      const folderService = getFolderService();
+      // Load both folders and files based on current folder context (null for root)
+      console.log('Loading folder content for folder ID:', currentFolderId);
+      const result = await folderService.getFolderContents(currentFolderId);
   
-        if (result.success && result.data) {        
-          // Update both folders and files in their respective contexts
-          setFolders(result.data.folders);
-          setFiles(result.data.files as DataRoomFile[]);
-          return { success: true };
-        } else {
-          const error = result.error || 'Failed to load folder content';
-          setError(ERROR_KEYS.FOLDER_LOADING, error);
-          return { success: false, error };
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load folder content';
-        setError(ERROR_KEYS.FOLDER_LOADING, errorMessage);
-        return { success: false, error: errorMessage };
-      } finally {
-        setLoading(false);
+      if (result.success && result.data) {        
+        // Update both folders and files in their respective contexts
+        setFolders(result.data.folders);
+        setFiles(result.data.files as DataRoomFile[]);
+        return { success: true };
+      } else {
+        const error = result.error || 'Failed to load folder content';
+        setError(ERROR_KEYS.FOLDER_LOADING, error);
+        return { success: false, error };
       }
-    };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load folder content';
+      setError(ERROR_KEYS.FOLDER_LOADING, errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createFolder = async (
     folderName: string, 

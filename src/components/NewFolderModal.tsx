@@ -61,10 +61,7 @@ const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFold
       </div>
 
       <div className="flex justify-end gap-3">
-        <Button
-          onClick={handleCancel}
-          disabled={isCreating}
-        >
+        <Button onClick={handleCancel} disabled={isCreating}>
           Cancel
         </Button>
         <Button

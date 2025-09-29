@@ -35,6 +35,8 @@ export const folderReducer = (state: FolderState, action: FolderAction): FolderS
       return { ...state, folders: action.payload as DataRoomFolder[] };
     case FOLDER_ACTIONS.ADD_FOLDER:
       return { ...state, folders: [...state.folders, action.payload as DataRoomFolder] };
+    case FOLDER_ACTIONS.DELETE_FOLDER:
+      return { ...state, folders: state.folders.filter(folder => folder.id !== action.payload as string) };
     default:
       return state;
   }

@@ -1,0 +1,79 @@
+import { getFolderService, getFileService } from '../data-room';
+import useLoadingActions from './stateActionHooks/useLoadingActions';
+import useErrorActions from './stateActionHooks/useErrorActions';
+import useFolderActions from './stateActionHooks/useFolderActions';
+import useFilesActions from './stateActionHooks/useFilesActions';
+import { ERROR_KEYS } from '../utils/constants/errors';
+
+interface DeleteResult {
+  success: boolean;
+  error?: string;
+}
+
+export const useItemDeletionCallbacks = () => {
+  const { setLoading } = useLoadingActions();
+  const { setError, clearError } = useErrorActions();
+  const { deleteFolder: removeFolderFromContext } = useFolderActions();
+  const { deleteFile: removeFileFromContext } = useFilesActions();
+
+  const deleteFolder = async (folderId: string): Promise<DeleteResult> => {
+    const errorKey = ERROR_KEYS.FOLDER_DELETION || 'FOLDER_DELETION';
+    
+    setLoading(true);
+    clearError(errorKey);
+
+    try {
+      const folderService = getFolderService();
+      const result = await folderService.deleteFolder(folderId);
+
+      if (result.success) {
+        // Remove from context - deleteFolder returns deletedIds array for cascading deletes
+        result.deletedIds?.forEach(id => removeFolderFromContext(id));
+        return { success: true };
+      } else {
+        const error = result.error || 'Failed to delete folder';
+        setError(errorKey, error);
+        return { success: false, error };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete folder';
+      setError(errorKey, errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteFile = async (fileId: string): Promise<DeleteResult> => {
+    const errorKey = ERROR_KEYS.FILE_DELETION || 'FILE_DELETION';
+    
+    setLoading(true);
+    clearError(errorKey);
+
+    try {
+      const fileService = getFileService();
+      const result = await fileService.deleteFile(fileId);
+
+      if (result.success) {
+        // Remove from context
+        removeFileFromContext(fileId);
+        return { success: true };
+      } else {
+        const error = result.error || 'Failed to delete file';
+        setError(errorKey, error);
+        return { success: false, error };
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete file';
+      setError(errorKey, errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    deleteFolder,
+    deleteFile,
+  };
+};

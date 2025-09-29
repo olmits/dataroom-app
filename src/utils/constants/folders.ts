@@ -5,6 +5,7 @@ export const FOLDER_ACTIONS = {
   SET_IS_CREATING: 'SET_IS_CREATING',
   SET_FOLDERS: 'SET_FOLDERS',
   ADD_FOLDER: 'ADD_FOLDER',
+  DELETE_FOLDER: 'DELETE_FOLDER',
 } as const;
 
 export type FolderActionType = typeof FOLDER_ACTIONS[keyof typeof FOLDER_ACTIONS];

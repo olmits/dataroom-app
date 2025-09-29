@@ -15,6 +15,7 @@ export const ERROR_KEYS = {
   FOLDER_DELETION: 'folder-deletion',
   FILE_UPLOAD: 'file-upload',
   FILE_DELETION: 'file-deletion',
+  ITEM_UPDATE: 'item-update',
 } as const;
 
 export type ErrorKeyType = typeof ERROR_KEYS[keyof typeof ERROR_KEYS];

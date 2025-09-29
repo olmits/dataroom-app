@@ -6,7 +6,7 @@ import { useLoadingStateContext } from '../contexts/LoadingContext';
 import { useFolderStateContext } from '../contexts/FolderContext';
 import useFolderActions from '../hooks/stateActionHooks/useFolderActions';
 import { getFolderService } from '../data-room';
-import type { DataRoomFolder, DataRoomItem, DataRoomFile } from '../types/dataroom';
+import type { DataRoomFolder, DataRoomItem } from '../types/dataroom';
 import { useFilesStateContext } from '@/contexts/FilesContext';
 import { useFolderCallbacks } from '@/hooks/useFolderCallbacks';
 
@@ -45,35 +45,6 @@ const DashboardContentGrid: React.FC = () => {
     loadFolderContent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFolderId]); 
-
-  const handleItemClick = (item: DataRoomItem) => {
-    if (item.type === 'folder') {
-      const folder = item as DataRoomFolder;
-      setCurrentFolder(folder.id);
-    } else if (item.type === 'file') {
-      const file = item as DataRoomFile;
-      handleFileView(file);
-    }
-  };
-
-  const handleFileView = (file: DataRoomFile) => {
-    try {
-      const byteCharacters = atob(file.content);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { type: file.mimeType });
-      const url = URL.createObjectURL(blob);
-      
-      window.open(url, '_blank');
-      
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (error) {
-      console.error('Failed to open file:', error);
-    }
-  };
 
   const handleBackToParent = () => {
     if (currentFolderDetails?.parentId !== undefined) {
@@ -128,11 +99,7 @@ const DashboardContentGrid: React.FC = () => {
         return (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             {allItems.map((item) => (
-              <ContentGridItem
-                key={item.id}
-                item={item}
-                onItemClick={handleItemClick}
-              />
+              <ContentGridItem key={item.id} item={item} />
             ))}
           </div>
         );

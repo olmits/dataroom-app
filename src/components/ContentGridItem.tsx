@@ -1,33 +1,33 @@
 import React from 'react';
-import { Folder, FileText, Trash2 } from 'lucide-react';
+import { Folder, FileText, Trash2, Edit3 } from 'lucide-react';
 import { formatFileSize } from '../utils/fileHelpers';
 import { useContentItem } from '../hooks/useContentItem';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import UpdateItemModal from './UpdateItemModal';
 import type { DataRoomItem, DataRoomFile } from '../types/dataroom';
 import Button from './common/Button';
 
 interface ContentGridItemProps {
   item: DataRoomItem;
-  onItemClick: (item: DataRoomItem) => void;
-  onItemDeleted?: (item: DataRoomItem) => void;
 }
 
-const ContentGridItem: React.FC<ContentGridItemProps> = ({ 
-  item, 
-  onItemClick,
-  onItemDeleted
-}) => {
+const ContentGridItem: React.FC<ContentGridItemProps> = ({ item }) => {
   const isFolder = item.type === 'folder';
   const file = item as DataRoomFile;
   
   const {
     deleteModalOpen,
     isDeleting,
+    updateModalOpen,
+    isUpdating,
     handleClick,
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteModalClose,
-  } = useContentItem({ item, onItemClick, onItemDeleted });
+    handleUpdateClick,
+    handleUpdateModalClose,
+    handleUpdateSuccess,
+  } = useContentItem(item);
 
   return (
     <>
@@ -38,13 +38,22 @@ const ContentGridItem: React.FC<ContentGridItemProps> = ({
         onClick={handleClick}
       >
         {!isDeleting && (
-          <Button
-            onClick={handleDeleteClick}
-            className="absolute top-2 right-2 p-1 rounded-full bg-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600"
-            title="Delete"
-          >
-            <Trash2 size={16} />
-          </Button>
+          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              onClick={handleUpdateClick}
+              className="p-1 rounded-full bg-white shadow-sm hover:bg-blue-50 hover:text-blue-600"
+              title="Rename"
+            >
+              <Edit3 size={16} />
+            </Button>
+            <Button
+              onClick={handleDeleteClick}
+              className="p-1 rounded-full bg-white shadow-sm hover:bg-red-50 hover:text-red-600"
+              title="Delete"
+            >
+              <Trash2 size={16} />
+            </Button>
+          </div>
         )}
 
         {isDeleting && (
@@ -89,6 +98,13 @@ const ContentGridItem: React.FC<ContentGridItemProps> = ({
         onConfirm={handleDeleteConfirm}
         item={item}
         isDeleting={isDeleting}
+      />
+      <UpdateItemModal
+        isOpen={updateModalOpen}
+        onClose={handleUpdateModalClose}
+        onUpdateSuccess={handleUpdateSuccess}
+        item={item}
+        isUpdating={isUpdating}
       />
     </>
   );

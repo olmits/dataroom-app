@@ -1,3 +1,5 @@
+import type { DataRoomFile } from '../types/dataroom';
+
 /**
  * Format file size in bytes to human readable format
  */
@@ -39,4 +41,28 @@ export const fileToBase64 = (file: File): Promise<string> => {
     };
     reader.onerror = (error) => reject(error);
   });
+};
+
+/**
+ * Open a DataRoom file in a new browser tab
+ */
+export const openFileInNewTab = (file: DataRoomFile): void => {
+  try {
+    const byteCharacters = atob(file.content);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: file.mimeType });
+    const url = URL.createObjectURL(blob);
+      
+    window.open(url, '_blank');
+      
+    // Clean up the object URL after a short delay
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    console.error('Failed to open file:', error);
+    throw new Error('Failed to open file');
+  }
 };

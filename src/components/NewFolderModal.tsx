@@ -5,6 +5,8 @@ import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
 import { ERROR_KEYS } from '../utils/constants/errors';
 import Modal from './common/Modal';
 import Button from './common/Button';
+import { useErrorStateContext } from '@/contexts/ErrorContext';
+import Alert from './common/Alert';
 
 interface NewFolderModalProps {
   isOpen: boolean;
@@ -15,6 +17,8 @@ interface NewFolderModalProps {
 const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFolderCreated }) => {
   const [folderName, setFolderName] = useState('');
 
+  const { errors } = useErrorStateContext();
+  const errorMessage = errors?.[ERROR_KEYS.FOLDER_CREATION]?.message;
   const { isCreating } = useFolderStateContext();
   const { createFolder } = useFolderCallbacks();
   const { clearError } = useErrorActions();
@@ -59,6 +63,7 @@ const NewFolderModal: React.FC<NewFolderModalProps> = ({ isOpen, onClose, onFold
           }}
         />
       </div>
+      {errorMessage && <Alert message={errorMessage} />}
 
       <div className="flex justify-end gap-3">
         <Button onClick={handleCancel} disabled={isCreating}>

@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 
 interface AlertProps {
   message: string;
-  onClose: () => void;
+  onClose?: () => void;
   type?: 'error' | 'warning' | 'info' | 'success';
 }
 
@@ -49,13 +49,15 @@ const Alert: React.FC<AlertProps> = ({
         <div className="flex-1">
           <p className="text-sm">{message}</p>
         </div>
-        <button
-          onClick={onClose}
-          className={`ml-3 transition-colors ${getCloseButtonStyles(type)}`}
-          aria-label="Close alert"
-        >
-          <X size={16} />
-        </button>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className={`ml-3 transition-colors ${getCloseButtonStyles(type)}`}
+            aria-label="Close alert"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
     </div>
   );

@@ -56,18 +56,16 @@ export const useFolderCallbacks = () => {
   const createFolder = async (
     folderName: string, 
   ): Promise<CreateFolderResult> => {
-    const errorKey = ERROR_KEYS.FOLDER_CREATION;
-    
     if (!folderName.trim()) {
       const error = 'Folder name is required';
-      setError(errorKey, error);
+      setError(ERROR_KEYS.FOLDER_CREATION, error);
       return { success: false, error };
     }
 
     // Set creating state
     setIsCreating(true);
     setLoading(true);
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FOLDER_CREATION);
 
     try {
       const folderService = getFolderService();
@@ -80,12 +78,12 @@ export const useFolderCallbacks = () => {
         return { success: true };
       } else {
         const error = result.error || 'Failed to create folder';
-        setError(errorKey, error);
+        setError(ERROR_KEYS.FOLDER_CREATION, error);
         return { success: false, error };
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create folder';
-      setError(errorKey, errorMessage);
+      setError(ERROR_KEYS.FOLDER_CREATION, errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setIsCreating(false);

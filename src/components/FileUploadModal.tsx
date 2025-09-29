@@ -32,11 +32,9 @@ export default function FileUploadModal({ isOpen, onClose, onUploadSuccess }: Fi
     resetFileInput
   } = useFileUpload();
 
-  const errorKey = ERROR_KEYS.FILE_UPLOAD;
-
   const handleClose = () => {
     resetFileInput();
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FILE_UPLOAD);
     onClose();
   };
 
@@ -53,10 +51,10 @@ export default function FileUploadModal({ isOpen, onClose, onUploadSuccess }: Fi
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Upload File">
       <div className="space-y-6">
-        {errors[errorKey] && (
-          <Alert 
-            message={errors[errorKey]!.message}
-            onClose={() => clearError(errorKey)}
+        {errors[ERROR_KEYS.FILE_UPLOAD] && (
+          <Alert
+            message={errors[ERROR_KEYS.FILE_UPLOAD]!.message}
+            onClose={() => clearError(ERROR_KEYS.FILE_UPLOAD)}
             type="error"
           />
         )}

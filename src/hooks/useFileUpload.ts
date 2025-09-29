@@ -31,23 +31,21 @@ export const useFileUpload = (): UseFileUploadResult => {
   const { setLoading } = useLoadingActions();
   const { setError, clearError } = useErrorActions();
 
-  const errorKey = ERROR_KEYS.FILE_UPLOAD;
-
   const handleFileSelect = (file: File) => {
     // Validate file type
     if (!isValidFileType(file)) {
-      setError(errorKey, 'Only PDF files are supported');
+      setError(ERROR_KEYS.FILE_UPLOAD, 'Only PDF files are supported');
       return;
     }
 
     // Validate file size (10MB max)
     if (!isValidFileSize(file, 10)) {
-      setError(errorKey, 'File size must be less than 10MB');
+      setError(ERROR_KEYS.FILE_UPLOAD, 'File size must be less than 10MB');
       return;
     }
 
     setSelectedFile(file);
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FILE_UPLOAD);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -80,7 +78,7 @@ export const useFileUpload = (): UseFileUploadResult => {
     if (!selectedFile) return false;
 
     setLoading(true);
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FILE_UPLOAD);
 
     try {
       const fileService = getFileService();
@@ -90,12 +88,12 @@ export const useFileUpload = (): UseFileUploadResult => {
         resetFileInput();
         return true;
       } else {
-        setError(errorKey, result.error || 'Failed to upload file');
+        setError(ERROR_KEYS.FILE_UPLOAD, result.error || 'Failed to upload file');
         return false;
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
-      setError(errorKey, errorMessage);
+      setError(ERROR_KEYS.FILE_UPLOAD, errorMessage);
       return false;
     } finally {
       setLoading(false);
@@ -104,7 +102,7 @@ export const useFileUpload = (): UseFileUploadResult => {
 
   const resetFileInput = () => {
     setSelectedFile(null);
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FILE_UPLOAD);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

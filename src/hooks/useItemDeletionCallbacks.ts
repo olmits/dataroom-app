@@ -17,10 +17,8 @@ export const useItemDeletionCallbacks = () => {
   const { deleteFile: removeFileFromContext } = useFilesActions();
 
   const deleteFolder = async (folderId: string): Promise<DeleteResult> => {
-    const errorKey = ERROR_KEYS.FOLDER_DELETION || 'FOLDER_DELETION';
-    
     setLoading(true);
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FOLDER_DELETION);
 
     try {
       const folderService = getFolderService();
@@ -32,12 +30,12 @@ export const useItemDeletionCallbacks = () => {
         return { success: true };
       } else {
         const error = result.error || 'Failed to delete folder';
-        setError(errorKey, error);
+        setError(ERROR_KEYS.FOLDER_DELETION, error);
         return { success: false, error };
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete folder';
-      setError(errorKey, errorMessage);
+      setError(ERROR_KEYS.FOLDER_DELETION, errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -45,10 +43,8 @@ export const useItemDeletionCallbacks = () => {
   };
 
   const deleteFile = async (fileId: string): Promise<DeleteResult> => {
-    const errorKey = ERROR_KEYS.FILE_DELETION || 'FILE_DELETION';
-    
     setLoading(true);
-    clearError(errorKey);
+    clearError(ERROR_KEYS.FILE_DELETION);
 
     try {
       const fileService = getFileService();
@@ -60,12 +56,12 @@ export const useItemDeletionCallbacks = () => {
         return { success: true };
       } else {
         const error = result.error || 'Failed to delete file';
-        setError(errorKey, error);
+        setError(ERROR_KEYS.FILE_DELETION, error);
         return { success: false, error };
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete file';
-      setError(errorKey, errorMessage);
+      setError(ERROR_KEYS.FILE_DELETION, errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);

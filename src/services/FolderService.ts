@@ -208,8 +208,4 @@ export class FolderService implements IFolderService {
 
     return descendants;
   }
-
-
-
-
 }

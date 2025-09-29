@@ -3,20 +3,20 @@ import NewFolderModal from './NewFolderModal';
 import DashboardHeader from './DashboardHeader';
 import DashboardContentGrid from './DashboardContentGrid';
 import Alert from './common/Alert';
-import useErrorActions from '../hooks/stateActionHooks/useErrorActions';
 import { useErrorStateContext } from '../contexts/ErrorContext';
-import { useFolderCallbacks } from '../hooks/useFolderCallbacks';
 import { ERROR_KEYS } from '../utils/constants/errors';
+import useErrorActions from '@/hooks/stateActionHooks/useErrorActions';
+import { useFolderCallbacks } from '@/hooks/useFolderCallbacks';
 
 const DataRoomDashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   const { clearError } = useErrorActions();
   const { errors } = useErrorStateContext();
-  const { loadFolders } = useFolderCallbacks();
+  const { loadFolderContent } = useFolderCallbacks();
 
   const handleFolderCreated = () => {
-    loadFolders(); // Refresh the folder list
+    loadFolderContent(); // Refresh both folders and files
   };
 
   return (

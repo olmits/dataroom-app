@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Folder, ArrowLeft } from 'lucide-react';
+
+import ContentGridItem from './ContentGridItem';
 import { useLoadingStateContext } from '../contexts/LoadingContext';
 import { useFolderStateContext } from '../contexts/FolderContext';
-import { useFolderCallbacks } from '../hooks/useFolderCallbacks';
 import useFolderActions from '../hooks/stateActionHooks/useFolderActions';
 import { getFolderService } from '../data-room';
-import type { DataRoomFolder } from '../types/dataroom';
+import type { DataRoomFolder, DataRoomItem, DataRoomFile } from '../types/dataroom';
+import { useFilesStateContext } from '@/contexts/FilesContext';
+import { useFolderCallbacks } from '@/hooks/useFolderCallbacks';
 
 const DashboardContentGrid: React.FC = () => {
   const { isLoading } = useLoadingStateContext();
   const { folders, currentFolderId } = useFolderStateContext();
-  const { loadFolders } = useFolderCallbacks();
+  const { files } = useFilesStateContext();
+
+  const { loadFolderContent } = useFolderCallbacks();
   const { setCurrentFolder } = useFolderActions();
 
   const [currentFolder, setCurrentFolderDetails] = useState<DataRoomFolder | null>(null);
@@ -38,13 +43,42 @@ const DashboardContentGrid: React.FC = () => {
   }, [currentFolderId]);
 
   useEffect(() => {
-    loadFolders();
+    loadFolderContent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFolderId]); 
 
-  // Handle folder click - navigate into folder
-  const handleFolderClick = (folder: DataRoomFolder) => {
-    setCurrentFolder(folder.id);
+    // Handle item click - navigate for folders, view for files
+  const handleItemClick = (item: DataRoomItem) => {
+    if (item.type === 'folder') {
+      const folder = item as DataRoomFolder;
+      setCurrentFolder(folder.id);
+    } else if (item.type === 'file') {
+      const file = item as DataRoomFile;
+      handleFileView(file);
+    }
+  };
+
+  // Handle file view - open PDF in new tab
+  const handleFileView = (file: DataRoomFile) => {
+    try {
+      // Convert base64 back to blob and create URL
+      const byteCharacters = atob(file.content);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: file.mimeType });
+      const url = URL.createObjectURL(blob);
+      
+      // Open in new tab
+      window.open(url, '_blank');
+      
+      // Clean up URL after a delay
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error('Failed to open file:', error);
+    }
   };
 
   // Handle back to parent folder
@@ -79,45 +113,39 @@ const DashboardContentGrid: React.FC = () => {
         </div>
       )}
 
-      {/* Empty state */}
-      {folders.length === 0 ? (
-        <div className="grid grid-cols-1 gap-4">
-          <div className="col-span-full text-center py-12">
-            <Folder size={48} className="mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600 text-lg mb-2">No content yet</p>
-            <p className="text-gray-500 mb-4">
-              {currentFolder 
-                ? `This folder is empty. Click "New Folder" above to add content.`
-                : `Click "New Folder" above to create your first folder and start organizing your documents`
-              }
-            </p>
-          </div>
-        </div>
-      ) : (
-        /* Content grid (folders and files) */
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {folders.map((folder) => (
-            <div
-              key={folder.id}
-              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 cursor-pointer group"
-              onClick={() => handleFolderClick(folder)}
-            >
-              <div className="flex flex-col items-center text-center">
-                <Folder 
-                  size={48} 
-                  className="text-blue-500 group-hover:text-blue-600 transition-colors mb-3" 
-                />
-                <h3 className="font-medium text-gray-900 truncate w-full" title={folder.name}>
-                  {folder.name}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  Created {new Date(folder.createdAt).toLocaleDateString()}
+      {/* Content */}
+      {(() => {
+        const allItems: DataRoomItem[] = [...folders, ...files];
+        
+        if (allItems.length === 0) {
+          return (
+            <div className="grid grid-cols-1 gap-4">
+              <div className="col-span-full text-center py-12">
+                <Folder size={48} className="mx-auto text-gray-400 mb-4" />
+                <p className="text-gray-600 text-lg mb-2">No content yet</p>
+                <p className="text-gray-500 mb-4">
+                  {currentFolder 
+                    ? `This folder is empty. Click "New Folder" above to add content.`
+                    : `Click "New Folder" above to create your first folder and start organizing your documents`
+                  }
                 </p>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          );
+        }
+
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            {allItems.map((item) => (
+              <ContentGridItem
+                key={item.id}
+                item={item}
+                onItemClick={handleItemClick}
+              />
+            ))}
+          </div>
+        );
+      })()}
     </div>
   );
 };
